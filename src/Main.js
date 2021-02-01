@@ -1,4 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+
+const themes = {
+  light: {
+    foreground: "#000000",
+    background: "#eeeeee",
+  },
+  dark: {
+    foreground: "#ffffff",
+    background: "#222222",
+  },
+};
+
+const ThemeContext = React.createContext(themes.light);
 
 function Main(props) {
   const [count, setCount] = useState(0); // takes initial state used in first render
@@ -14,24 +27,41 @@ function Main(props) {
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const handleAdd = (e) => {
+    e.preventDefault();
+    setCount(count + 1);
+  };
+
+  const handleSubtract = (e) => {
+    e.preventDefault();
+    setCount(count - 1);
+  };
+
   return (
-    <div>
+    <ThemeContext.Provider value={themes.dark}>
       <p>{count}</p>
-      <button
-        onClick={() => {
-          setCount(count + 1);
-        }}
-      >
-        +
-      </button>
-      <button
-        onClick={() => {
-          setCount(count - 1);
-        }}
-      >
-        -
-      </button>
-    </div>
+      <ThemedButton type="add" action={handleAdd} />
+      <ThemedButton type="subtract" action={handleSubtract} />
+    </ThemeContext.Provider>
+  );
+}
+
+function ThemedButton(props) {
+  const theme = useContext(ThemeContext);
+  const handleClick = (e) => {
+    if (props.type === "add") {
+      props.action();
+    } else {
+      props.action();
+    }
+  };
+  return (
+    <button
+      style={{ background: theme.background, color: theme.foreground }}
+      onClick={() => handleClick}
+    >
+      {props.type === "add" ? "+" : "-"}
+    </button>
   );
 }
 
