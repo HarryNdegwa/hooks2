@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 
 const themes = {
   light: {
@@ -15,6 +15,8 @@ const ThemeContext = React.createContext(themes.light);
 
 function Main(props) {
   const [count, setCount] = useState(0); // takes initial state used in first render
+
+  const inputRef = useRef(null);
 
   useEffect(() => {
     console.log("Mounted");
@@ -37,11 +39,18 @@ function Main(props) {
     setCount(count - 1);
   };
 
+  const handleClick = (e) => {
+    e.preventDefault();
+    inputRef.current.focus();
+  };
+
   return (
     <ThemeContext.Provider value={themes.dark}>
       <p>{count}</p>
       <ThemedButton type="add" action={handleAdd} />
       <ThemedButton type="subtract" action={handleSubtract} />
+      <input type="text" ref={inputRef} placeholder="Type here..." />
+      <button onClick={handleClick}>Focus</button>
     </ThemeContext.Provider>
   );
 }
